@@ -5,11 +5,13 @@ class App extends React.Component {
         links: [],
         imageLinks: [],
         titles: [],
-        descriptions: []
+        descriptions: [],
+        // articleDetailsData: '',
+        // articleDetailsHtml: []
+        //TODO fix ArticleDetails
     };
 
-    setImageData = (receivedData) => {
-
+    setArticleDetailsData = (receivedData) => {
         var imgLinks = this.state.imageLinks.slice();
         var titles = this.state.titles.slice();
         var descriptions = this.state.descriptions.slice();
@@ -22,13 +24,16 @@ class App extends React.Component {
         this.setState({descriptions: descriptions});
     }
 
-    setData = (dataToSet) => {
+    setArticleApiData = (dataToSet) => {
+        console.log(dataToSet);
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 20).map((data) => {
+        this.state.data.response.docs.slice(0, 1).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
+
+        //deleting all data = to render new one - prevents duplicating
         this.setState({imageLinks: []});
         this.setState({titles: []});
         this.setState({descriptions: []});
@@ -41,7 +46,7 @@ class App extends React.Component {
                     q: link
                 },
                 dataType: 'jsonp',
-                success: this.setImageData
+                success: this.setArticleDetailsData
             });
         })
     }
@@ -52,12 +57,38 @@ class App extends React.Component {
         });
     }
 
+    articleClicked =(evt, i) => {
+        evt.currentTarget.style.backgroundColor = 'white';
+        let aDoc = this.state.data.response.docs[i];
+        // let aDocDetails = JSON.stringify(aDoc);
+        console.log(aDoc);
+        this.setState({articleDetailsData: aDoc});
+        console.log(this.state.articleDetailsData);
+        //TODO fix ArticleDetails
+    }
 
     render() {
+
+
         return (
             <div className="wrapper">
                 <DateChooser inputChange={this.updateInputValue} articleClick={this.getArticles}/>
-                <GridLayout images={this.state.imageLinks} titles={this.state.titles} descriptions = {this.state.descriptions}/>
+                <div className="page">
+                    <ArticleGrid className="master"
+                                 clicked = {this.articleClicked}
+                                 images={this.state.imageLinks}
+                                 titles={this.state.titles}
+                                descriptions={this.state.descriptions}/>
+
+                    //TODO fix ArticleDetails
+                    <ArticleDetails headline = {this.state.articleDetailsData.headline}
+                                    author = {this.state.articleDetailsData.byline.original}
+                                    keywords = {this.state.articleDetailsData.keywords.value}
+                                    pub_date = {this.state.articleDetailsData.pub_date}
+                                    section = {this.state.articleDetailsData.section_name}
+                                    word_count = {this.state.articleDetailsData.word_count}/>
+                    />
+                </div>
             </div>
         )
     }
@@ -73,7 +104,7 @@ class App extends React.Component {
                     apikey: "3674ce641aa342e7b8d71ff60e382c11"
                 },
                 url: url,
-                'success': this.setData
+                'success': this.setArticleApiData
             });
         } else {
             alert('You must choose some month and year');
@@ -82,32 +113,30 @@ class App extends React.Component {
 }
 
 const DateChooser = (props) => {
-
     return (
         <div>
             <input type="month" onChange={evt => props.inputChange(evt)}/>
             <button onClick={props.articleClick}>Click to get articles</button>
         </div>
-
     );
 
 }
 
-class GridLayout extends React.Component {
-
+class ArticleGrid extends React.Component {
     render() {
-        var images = this.props.images;
-        var titles = this.props.titles;
-        var descriptions = this.props.descriptions;
+        let images = this.props.images;
+        let titles = this.props.titles;
+        let descriptions = this.props.descriptions;
 
         return (
             <div className="wrapper">
                 <div className="flex-grid">
                     {
-                        Object.keys(images).map((image, i) => {
-                            return (<Row img={images[image]} title={titles[image]} description={descriptions[image]} key={i}> </Row>)
+                        Object.keys(images).map((index, i) => {
+                            return (<ArticlePreview onClick={(evt)=>this.props.clicked(evt, i)} img={images[index]} title={titles[index]}
+                                                    description={descriptions[index]}
+                                                    key={i}> </ArticlePreview>)
                         })
-
                     }
                 </div>
             </div>
@@ -115,13 +144,28 @@ class GridLayout extends React.Component {
     }
 }
 
-const Row = (props) => (
-    <div className="col">
-        <p className="titleP">{props.title}</p>
-        <img src={props.img}/>
-        <p>{props.description}</p>
-    </div>
-)
+const ArticlePreview = (props) => {
+    return (
+        <div className="col" onClick = {props.onClick}>
+            <p className="title_p">{props.title}</p>
+            <img src={props.img}/>
+            <p>{props.description ? props.description.substring(0, 100) + "..." : props.description}</p>
+        </div>
+    )
+}
 
+const ArticleDetails = (props) => {
+    return (
+        <div className="details">
+            <h2>{props.headline}</h2>
+            <h3>{props.author}</h3>
+            <p>{props.keywords}</p>
+            <p>{props.pub_date}</p>
+            <p>{props.section}</p>
+            <p>{props.word_count}</p>
+        </div>
+    );
+
+}
 
 ReactDOM.render(<App/>, document.getElementById('root'));

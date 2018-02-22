@@ -1,6 +1,5 @@
 
 .flex-grid {
-    position: relative;
     display: flex;
     flex-flow: row wrap;
     width: 1000px;
@@ -14,16 +13,16 @@
     box-sizing: border-box;
     height: 300px;
     flex-basis: 25%;
-    width: 250px;
     border: 1px solid black;
     background-color: lightgrey;
+
 }
 
 img {
     margin-top: 10px;
     margin-bottom: 10px;
-    height: 150px;
-    width: 150px;
+    height: 140px;
+    width: 140px;
     object-fit: cover;
     border: 1px solid black;
 }
@@ -37,42 +36,87 @@ p{
     padding: 3px;
 }
 
-.titleP{
+.title_p{
 
     font-size: 0.75em;
     margin-bottom: 25px;
     font-weight: bold;
 }
 
-.flex-grid>div {
-}
-
-@media (max-width: 640px) {
-    .flex-grid{
-        width: 200px;
-    }
-    .col {
-        flex-basis: 100%;
-    }
-    img{
-        flex-basis: 100%;
-    }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-
-    .flex-grid{
-        width: 400px;
-    }
-    .col {
-        flex-basis: 50%;
-    }
-    img{
-        flex-basis: 50%;
-    }
-}
 
 .wrapper {
     text-align: center;
 }
+
+.page{
+    display: flex;
+}
+
+
+.details{
+    position: fixed;
+    float: right;
+    top: 6em;
+    right: 10em;
+}
+
+@media (max-width: 640px) {
+    .flex-grid{
+        width: 300px;
+    }
+    .col {
+        flex-basis: 100%;
+    }
+    img{
+        flex-basis: 100%;
+    }
+    .details{
+        top: 6em;
+        right: 2em;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .flex-grid{
+        width: 500px;
+    }
+    .col {
+        flex-basis: 50%;
+    }
+    img{
+        flex-basis: 50%;
+    }
+
+    .details{
+        top: 6em;
+        right: 3em;
+    }
+
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .flex-grid{
+        width: 800px;
+    }
+    .col {
+        flex-basis: 50%;
+    }
+    img{
+        flex-basis: 50%;
+    }
+
+    .details{
+        top: 6em;
+        right: 4em;
+    }
+
+    .col {
+        height: 300px;
+        width: 200px;
+    }
+
+}
+
+
+
 
