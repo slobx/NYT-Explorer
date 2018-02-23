@@ -14,8 +14,6 @@
     height: 300px;
     flex-basis: 25%;
     border: 1px solid black;
-    background-color: lightgrey;
-
 }
 
 img {
@@ -58,6 +56,14 @@ p{
     float: right;
     top: 6em;
     right: 10em;
+    width: 300px;
+}
+
+.white {
+    background-color: white;
+}
+.red {
+    background-color: gray;
 }
 
 @media (max-width: 640px) {

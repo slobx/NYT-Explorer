@@ -6,9 +6,8 @@ class App extends React.Component {
         imageLinks: [],
         titles: [],
         descriptions: [],
-        // articleDetailsData: '',
-        // articleDetailsHtml: []
-        //TODO fix ArticleDetails
+        articleDetailsData: [],
+        clicked_index: ""
     };
 
     setArticleDetailsData = (receivedData) => {
@@ -28,7 +27,7 @@ class App extends React.Component {
         console.log(dataToSet);
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 1).map((data) => {
+        this.state.data.response.docs.slice(0, 4).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
@@ -58,13 +57,21 @@ class App extends React.Component {
     }
 
     articleClicked =(evt, i) => {
-        evt.currentTarget.style.backgroundColor = 'white';
-        let aDoc = this.state.data.response.docs[i];
-        // let aDocDetails = JSON.stringify(aDoc);
-        console.log(aDoc);
-        this.setState({articleDetailsData: aDoc});
-        console.log(this.state.articleDetailsData);
-        //TODO fix ArticleDetails
+        this.setState({clicked_index: i});
+        // evt.currentTarget.style.backgroundColor = 'white';
+        console.log("Index: " + i +" and state Index: " + this.state.index);
+        let headline = this.state.data.response.docs[i].headline.main;
+        let author = this.state.data.response.docs[i].byline.original;
+        let pub_date = this.state.data.response.docs[i].pub_date;
+        let section = this.state.data.response.docs[i].section_name;
+        let word_count = this.state.data.response.docs[i].word_count;
+        let aDocDetails = [];
+        aDocDetails.push(headline);
+        aDocDetails.push(author);
+        aDocDetails.push(pub_date);
+        aDocDetails.push(section);
+        aDocDetails.push(word_count);
+        this.setState({articleDetailsData: aDocDetails});
     }
 
     render() {
@@ -75,18 +82,19 @@ class App extends React.Component {
                 <DateChooser inputChange={this.updateInputValue} articleClick={this.getArticles}/>
                 <div className="page">
                     <ArticleGrid className="master"
+                                 index = {this.state.index}
+                                 selected = {this.state.selected}
                                  clicked = {this.articleClicked}
                                  images={this.state.imageLinks}
                                  titles={this.state.titles}
-                                descriptions={this.state.descriptions}/>
+                                 descriptions={this.state.descriptions}
+                                 clicked_index = {this.state.clicked_index}/>
 
-                    //TODO fix ArticleDetails
-                    <ArticleDetails headline = {this.state.articleDetailsData.headline}
-                                    author = {this.state.articleDetailsData.byline.original}
-                                    keywords = {this.state.articleDetailsData.keywords.value}
-                                    pub_date = {this.state.articleDetailsData.pub_date}
-                                    section = {this.state.articleDetailsData.section_name}
-                                    word_count = {this.state.articleDetailsData.word_count}/>
+                    <ArticleDetails headline = {this.state.articleDetailsData[0]}
+                                    author = {this.state.articleDetailsData[1]}
+                                    pub_date = {this.state.articleDetailsData[2]}
+                                    section = {this.state.articleDetailsData[3]}
+                                    word_count = {this.state.articleDetailsData[4]}
                     />
                 </div>
             </div>
@@ -95,6 +103,7 @@ class App extends React.Component {
 
     getArticles = () => {
         if (this.state.inputValue) {
+            this.setState({articleDetailsData: []});
             const year = this.state.inputValue.slice(0, 4);
             const month = this.state.inputValue.slice(5, 7).replace(/^0+/, '');
             const url = "https://api.nytimes.com/svc/archive/v1/" + year + "/" + month + ".json"
@@ -133,7 +142,10 @@ class ArticleGrid extends React.Component {
                 <div className="flex-grid">
                     {
                         Object.keys(images).map((index, i) => {
-                            return (<ArticlePreview onClick={(evt)=>this.props.clicked(evt, i)} img={images[index]} title={titles[index]}
+                            return (<ArticlePreview isClicked={i === this.props.clicked_index}
+                                                    onClick={(evt)=>this.props.clicked(evt, i)}
+                                                    img={images[index]}
+                                                    title={titles[index]}
                                                     description={descriptions[index]}
                                                     key={i}> </ArticlePreview>)
                         })
@@ -146,7 +158,7 @@ class ArticleGrid extends React.Component {
 
 const ArticlePreview = (props) => {
     return (
-        <div className="col" onClick = {props.onClick}>
+        <div className={`col ${props.isClicked ? 'red': 'white'}`} onClick = {props.onClick}>
             <p className="title_p">{props.title}</p>
             <img src={props.img}/>
             <p>{props.description ? props.description.substring(0, 100) + "..." : props.description}</p>
@@ -157,9 +169,8 @@ const ArticlePreview = (props) => {
 const ArticleDetails = (props) => {
     return (
         <div className="details">
-            <h2>{props.headline}</h2>
-            <h3>{props.author}</h3>
-            <p>{props.keywords}</p>
+            <p>{props.headline}</p>
+            <p>{props.author}</p>
             <p>{props.pub_date}</p>
             <p>{props.section}</p>
             <p>{props.word_count}</p>
