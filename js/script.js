@@ -1,6 +1,5 @@
 class App extends React.Component {
     state = {
-        inputValue: '',
         data: [],
         links: [],
         imageLinks: [],
@@ -27,7 +26,7 @@ class App extends React.Component {
         console.log(dataToSet);
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 4).map((data) => {
+        this.state.data.response.docs.slice(0, 20).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
@@ -56,10 +55,10 @@ class App extends React.Component {
         });
     }
 
-    articleClicked =(evt, i) => {
+    articleClicked = (evt, i) => {
         this.setState({clicked_index: i});
         // evt.currentTarget.style.backgroundColor = 'white';
-        console.log("Index: " + i +" and state Index: " + this.state.index);
+        console.log("Index: " + i + " and state Index: " + this.state.index);
         let headline = this.state.data.response.docs[i].headline.main;
         let author = this.state.data.response.docs[i].byline.original;
         let pub_date = this.state.data.response.docs[i].pub_date;
@@ -76,25 +75,26 @@ class App extends React.Component {
 
     render() {
 
-
         return (
-            <div className="wrapper">
-                <DateChooser inputChange={this.updateInputValue} articleClick={this.getArticles}/>
+            <div className="container">
+                <div className="banner">
+                    <DateChooser inputChange={this.updateInputValue} articleClick={this.getArticles}/>
+                </div>
                 <div className="page">
                     <ArticleGrid className="master"
-                                 index = {this.state.index}
-                                 selected = {this.state.selected}
-                                 clicked = {this.articleClicked}
+                                 index={this.state.index}
+                                 selected={this.state.selected}
+                                 clicked={this.articleClicked}
                                  images={this.state.imageLinks}
                                  titles={this.state.titles}
                                  descriptions={this.state.descriptions}
-                                 clicked_index = {this.state.clicked_index}/>
+                                 clicked_index={this.state.clicked_index}/>
 
-                    <ArticleDetails headline = {this.state.articleDetailsData[0]}
-                                    author = {this.state.articleDetailsData[1]}
-                                    pub_date = {this.state.articleDetailsData[2]}
-                                    section = {this.state.articleDetailsData[3]}
-                                    word_count = {this.state.articleDetailsData[4]}
+                    <ArticleDetails headline={this.state.articleDetailsData[0]}
+                                    author={this.state.articleDetailsData[1]}
+                                    pub_date={this.state.articleDetailsData[2]}
+                                    section={this.state.articleDetailsData[3]}
+                                    word_count={this.state.articleDetailsData[4]}
                     />
                 </div>
             </div>
@@ -102,10 +102,10 @@ class App extends React.Component {
     }
 
     getArticles = () => {
-        if (this.state.inputValue) {
+        if ($("#search_input").val() && $("#year_selector").val()) {
             this.setState({articleDetailsData: []});
-            const year = this.state.inputValue.slice(0, 4);
-            const month = this.state.inputValue.slice(5, 7).replace(/^0+/, '');
+            const year = $("#search_input").val();
+            const month = $("#year_selector").val();
             const url = "https://api.nytimes.com/svc/archive/v1/" + year + "/" + month + ".json"
             $.ajax({
                 type: "GET",
@@ -123,9 +123,34 @@ class App extends React.Component {
 
 const DateChooser = (props) => {
     return (
-        <div>
-            <input type="month" onChange={evt => props.inputChange(evt)}/>
-            <button onClick={props.articleClick}>Click to get articles</button>
+        <div className="search_wrapper">
+            <p className="heading_msg" >N E W    Y O R K    T I M E S</p>
+            <p className="heading_msg" >Search news</p>
+            <div className="dropdown-buttons">
+                <div className="dropdown-button">
+                    <select id="year_selector">
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div className="dropdown-input">
+                    <input className="search_input" id="search_input" type="number" min="1851" max="2018" maxLength="4" minLength="4"
+                           placeholder="e.g. 1999"/>
+                </div>
+            </div>
+            <div className="button_wrapper">
+                <button className="search_btn" onClick={props.articleClick}>Click to get articles</button>
+            </div>
         </div>
     );
 
@@ -143,7 +168,7 @@ class ArticleGrid extends React.Component {
                     {
                         Object.keys(images).map((index, i) => {
                             return (<ArticlePreview isClicked={i === this.props.clicked_index}
-                                                    onClick={(evt)=>this.props.clicked(evt, i)}
+                                                    onClick={(evt) => this.props.clicked(evt, i)}
                                                     img={images[index]}
                                                     title={titles[index]}
                                                     description={descriptions[index]}
@@ -158,10 +183,10 @@ class ArticleGrid extends React.Component {
 
 const ArticlePreview = (props) => {
     return (
-        <div className={`col ${props.isClicked ? 'red': 'white'}`} onClick = {props.onClick}>
+        <div className={`col ${props.isClicked ? 'red' : 'white'}`} onClick={props.onClick}>
             <p className="title_p">{props.title}</p>
             <img src={props.img}/>
-            <p>{props.description ? props.description.substring(0, 100) + "..." : props.description}</p>
+            <p className="text_p">{props.description ? props.description.substring(0, 100) + "..." : props.description}</p>
         </div>
     )
 }
