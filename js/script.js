@@ -28,7 +28,7 @@ class App extends React.Component {
         console.log(dataToSet);
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 2).map((data) => {
+        this.state.data.response.docs.slice(0, 4).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});

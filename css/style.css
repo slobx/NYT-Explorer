@@ -5,7 +5,6 @@
 
 html, body {
     font-family: Ubuntu, sans-serif;
-    font-style: light;
     font-size: 14px;
     color: #333;
     background-color: #f3f1f2;
@@ -179,7 +178,6 @@ html, body {
     transition: all 1s ease;
 }
 
-
 img {
     /*background-color: #F2F0F0;*/
     margin-bottom: 10px;
@@ -236,8 +234,8 @@ img {
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
 
 /* Modal Content */
@@ -248,26 +246,38 @@ img {
     padding: 0px;
     border: 1px solid #888;
     width: 30%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
     animation-name: animatetop;
     animation-duration: 0.4s
 }
 
-.read_more_btn{
+.read_more_btn {
 
 }
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
 }
 
 @keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
 }
 
 /* The Close Button */
@@ -291,7 +301,9 @@ img {
     color: white;
 }
 
-.modal-body {padding: 2px 16px;}
+.modal-body {
+    padding: 2px 16px;
+}
 
 .modal-footer {
     padding: 2px 16px;
@@ -301,34 +313,59 @@ img {
 
 @media (max-width: 640px) {
     .flex-grid {
-        width: 300px;
+        width: 200%;
     }
 
-    .field {
+    .col {
         flex-basis: 100%;
     }
 
     img {
-        flex-basis: 100%;
+        width: 80%;
+    }
+    .title_p {
+        margin: 5px 30px 20px;
+        height: 30px;
+        font-size: 1.2em;
+    }
+
+    .text_p {
+        font-size: 1.1em;
+        margin: 6px;
     }
 
     .details {
         top: 6em;
         right: 2em;
     }
+
+    .banner {
+        width: 200%;
+    }
+    .modal-content {
+        width: 65%;
+    }
+    .modal {
+        padding-top: 150%; /* Location of the box */
+    }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
     .flex-grid {
-        width: 500px;
+        width: 100%;
+        display: flex;
+        padding-left: 75px;
+        padding-right: 50px;
+        margin: 3%;
     }
 
-    .field {
-        flex-basis: 50%;
+    .col {
+        flex-basis: 48%;
+        margin: 1%;
     }
 
     img {
-        flex-basis: 50%;
+        margin: 0px 0px -5px;
     }
 
     .details {
@@ -336,19 +373,48 @@ img {
         right: 3em;
     }
 
-}
-
-@media (min-width: 1025px) and (max-width: 1440px) {
-    .flex-grid {
-        width: 800px;
+    .title_p {
+        margin: 5px 20px 40px;
+        height: 30px;
+        font-size: 1.2em;
+        margin-left: 2px;
     }
 
-    .field {
-        flex-basis: 50%;
+    .text_p {
+        font-size: 1em;
+        font-family: "Tahoma";
+        align-self: center;
+        margin: 6px;
+    }
+
+    .modal-content {
+        width: 45%;
+    }
+
+    .modal {
+        padding-top: 50%; /* Location of the box */
+    }
+
+    .banner{
+        width: 110%;
+    }
+
+}
+
+@media (min-width: 1281px) and (max-width: 1440px) {
+    .flex-grid {
+        width: 100%;
+        display: flex;
+        padding: 0%;
+    }
+
+    .col {
+        flex-basis: 23%;
+        margin: 1%;
     }
 
     img {
-        flex-basis: 50%;
+        flex-basis: 100%;
     }
 
     .details {
@@ -356,9 +422,27 @@ img {
         right: 4em;
     }
 
-    .field {
-        height: 300px;
-        width: 200px;
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+    .flex-grid {
+        width: 100%;
+        display: flex;
+        padding: 2%;
+    }
+
+    .col {
+        flex-basis: 23%;
+        margin: 1%;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .details {
+        top: 6em;
+        right: 4em;
     }
 
 }
