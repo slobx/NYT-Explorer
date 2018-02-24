@@ -1,4 +1,5 @@
 class App extends React.Component {
+
     state = {
         data: [],
         links: [],
@@ -8,6 +9,7 @@ class App extends React.Component {
         articleDetailsData: [],
         clicked_index: ""
     };
+
 
     setArticleDetailsData = (receivedData) => {
         var imgLinks = this.state.imageLinks.slice();
@@ -26,7 +28,7 @@ class App extends React.Component {
         console.log(dataToSet);
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 20).map((data) => {
+        this.state.data.response.docs.slice(0, 2).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
@@ -56,6 +58,17 @@ class App extends React.Component {
     }
 
     articleClicked = (evt, i) => {
+        var modal = document.getElementById('myModal');
+        var span = document.getElementsByClassName("close")[0];
+        modal.style.display = "block";
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
         this.setState({clicked_index: i});
         // evt.currentTarget.style.backgroundColor = 'white';
         console.log("Index: " + i + " and state Index: " + this.state.index);
@@ -64,12 +77,14 @@ class App extends React.Component {
         let pub_date = this.state.data.response.docs[i].pub_date;
         let section = this.state.data.response.docs[i].section_name;
         let word_count = this.state.data.response.docs[i].word_count;
+        let web_url = this.state.data.response.docs[i].web_url;
         let aDocDetails = [];
         aDocDetails.push(headline);
         aDocDetails.push(author);
         aDocDetails.push(pub_date);
         aDocDetails.push(section);
         aDocDetails.push(word_count);
+        aDocDetails.push(web_url);
         this.setState({articleDetailsData: aDocDetails});
     }
 
@@ -95,6 +110,7 @@ class App extends React.Component {
                                     pub_date={this.state.articleDetailsData[2]}
                                     section={this.state.articleDetailsData[3]}
                                     word_count={this.state.articleDetailsData[4]}
+                                    web_url = {this.state.articleDetailsData[5]}
                     />
                 </div>
             </div>
@@ -124,8 +140,8 @@ class App extends React.Component {
 const DateChooser = (props) => {
     return (
         <div className="search_wrapper">
-            <p className="heading_msg" >N E W    Y O R K    T I M E S</p>
-            <p className="heading_msg" >Search news</p>
+            <p className="heading_msg">N E W Y O R K T I M E S</p>
+            <p className="heading_msg">Search news</p>
             <div className="dropdown-buttons">
                 <div className="dropdown-button">
                     <select id="year_selector">
@@ -144,7 +160,8 @@ const DateChooser = (props) => {
                     </select>
                 </div>
                 <div className="dropdown-input">
-                    <input className="search_input" id="search_input" type="number" min="1851" max="2018" maxLength="4" minLength="4"
+                    <input className="search_input" id="search_input" type="number" min="1851" max="2018" maxLength="4"
+                           minLength="4"
                            placeholder="e.g. 1999"/>
                 </div>
             </div>
@@ -193,12 +210,23 @@ const ArticlePreview = (props) => {
 
 const ArticleDetails = (props) => {
     return (
-        <div className="details">
-            <p>{props.headline}</p>
-            <p>{props.author}</p>
-            <p>{props.pub_date}</p>
-            <p>{props.section}</p>
-            <p>{props.word_count}</p>
+        <div id="myModal" className="modal">
+            <div className="modal-content">
+                <div className="modal-header">
+                    <span className="close">&times;</span>
+                    <p>{props.headline}</p>
+                </div>
+                <div className="modal-body">
+                    <p>Section: {props.section}</p>
+                    <p>Word count: {props.word_count}</p>
+                    <p>Author: {props.author}</p>
+                    <p>Publication date: {props.pub_date}</p>
+                    <button className="read_more_btn"><a target="_blank" href={props.web_url}>Read more</a></button>
+                </div>
+                <div className="modal-footer">
+
+                </div>
+            </div>
         </div>
     );
 
