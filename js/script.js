@@ -12,6 +12,7 @@ class App extends React.Component {
 
 
     setArticleDetailsData = (receivedData) => {
+        $("i").removeClass("fa fa-spinner fa-spin");
         var imgLinks = this.state.imageLinks.slice();
         var titles = this.state.titles.slice();
         var descriptions = this.state.descriptions.slice();
@@ -25,10 +26,14 @@ class App extends React.Component {
     }
 
     setArticleApiData = (dataToSet) => {
+
         console.log(dataToSet);
+        //sets received data from NYT to state
         this.setState({data: dataToSet});
+
+
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 4).map((data) => {
+        this.state.data.response.docs.slice(0, 20).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
@@ -61,17 +66,17 @@ class App extends React.Component {
         var modal = document.getElementById('myModal');
         var span = document.getElementsByClassName("close")[0];
         modal.style.display = "block";
-        span.onclick = function() {
+        span.onclick = function () {
             modal.style.display = "none";
         }
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
+
+
         this.setState({clicked_index: i});
-        // evt.currentTarget.style.backgroundColor = 'white';
-        console.log("Index: " + i + " and state Index: " + this.state.index);
         let headline = this.state.data.response.docs[i].headline.main;
         let author = this.state.data.response.docs[i].byline.original;
         let pub_date = this.state.data.response.docs[i].pub_date;
@@ -110,15 +115,17 @@ class App extends React.Component {
                                     pub_date={this.state.articleDetailsData[2]}
                                     section={this.state.articleDetailsData[3]}
                                     word_count={this.state.articleDetailsData[4]}
-                                    web_url = {this.state.articleDetailsData[5]}
+                                    web_url={this.state.articleDetailsData[5]}
                     />
                 </div>
+
             </div>
         )
     }
 
     getArticles = () => {
         if ($("#search_input").val() && $("#year_selector").val()) {
+            $("i").addClass("fa fa-spinner fa-spin");
             this.setState({articleDetailsData: []});
             const year = $("#search_input").val();
             const month = $("#year_selector").val();
@@ -134,14 +141,15 @@ class App extends React.Component {
         } else {
             alert('You must choose some month and year');
         }
+
     }
 }
 
 const DateChooser = (props) => {
     return (
         <div className="search_wrapper">
-            <p className="heading_msg">N E W Y O R K T I M E S</p>
-            <p className="heading_msg">Search news</p>
+            <p className="heading_msg">T H E&nbsp;&nbsp;N E W&nbsp;&nbsp;Y O R K&nbsp;&nbsp;T I M E S</p>
+            <p className="heading_msg">E X P L O R E R</p>
             <div className="dropdown-buttons">
                 <div className="dropdown-button">
                     <select id="year_selector">
@@ -166,7 +174,9 @@ const DateChooser = (props) => {
                 </div>
             </div>
             <div className="button_wrapper">
-                <button className="search_btn" onClick={props.articleClick}>Click to get articles</button>
+                <button className="search_btn" id="search_btn" onClick={props.articleClick}>
+                    <i></i>&nbsp; Click to get articles
+                </button>
             </div>
         </div>
     );
@@ -223,13 +233,16 @@ const ArticleDetails = (props) => {
                     <p>Publication date: {props.pub_date}</p>
                     <button className="read_more_btn"><a target="_blank" href={props.web_url}>Read more</a></button>
                 </div>
+
                 <div className="modal-footer">
 
                 </div>
             </div>
+
         </div>
     );
 
 }
+
 
 ReactDOM.render(<App/>, document.getElementById('root'));
