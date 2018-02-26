@@ -145,7 +145,6 @@ html{
     color: #fff;
     box-shadow: 0 3px #16A085;
     margin-top: 20px;
-
     -webkit-font-smoothing: subpixel-antialiased;
     -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
     transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
@@ -226,7 +225,7 @@ html{
 
 img {
     /*background-color: #F2F0F0;*/
-    background: url("../assets/col-bg.jpg");
+    background: url("../assets/col-bg.png");
     margin-bottom: 10px;
     height: 140px;
     width: 300px;
@@ -294,6 +293,7 @@ img {
     padding: 0px;
     border: 1px solid #888;
     width: 35%;
+    color: #566375;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -304,21 +304,21 @@ img {
 
 .read_more_btn {
     border: none;
-    background-color: #E74C3C;
+    background-color: #1ABC9C;
     font-size: 15px;
     font-weight: normal;
     line-height: 1.4;
     border-radius: 4px;
     margin-left: 38%;
     margin-top: 3%;
-    padding: 10px 15px;
+    padding: 10px 20px;
     -webkit-font-smoothing: subpixel-antialiased;
     -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
     transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
     }
 
 .read_more_btn:hover {
-    background-color:#C0392B;
+    background-color:#16A085;
 }
 
 a:link {
@@ -368,7 +368,7 @@ a:link {
 
 .modal-header {
     padding: 2px 16px;
-    background-color: #1abc9c;
+    background-color: #34495e;
     color: white;
     font-size: 20px;
 }

@@ -76,6 +76,7 @@ class App extends React.Component {
         }
 
 
+        this.setState({articleDetailsData: []});
         this.setState({clicked_index: i});
         let headline = this.state.data.response.docs[i].headline.main;
         let author = this.state.data.response.docs[i].byline.original;
