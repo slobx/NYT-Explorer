@@ -37,7 +37,7 @@ class App extends React.Component {
         //sets received data from NYT to state
         this.setState({data: dataToSet});
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 2).map((data) => {
+        this.state.data.response.docs.slice(0, 20).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
