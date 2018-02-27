@@ -12,7 +12,12 @@ class App extends React.Component {
 
 
     setArticleDetailsData = (receivedData) => {
-        $("i").removeClass("fa fa-spinner fa-spin");
+
+
+        //enables the button after success response from API and removes spinner
+        $("#search_btn").prop("disabled",false);
+        $("#search_btn").text("CLICK TO GET ARTICLES");
+
         var imgLinks = this.state.imageLinks.slice();
         var titles = this.state.titles.slice();
         var descriptions = this.state.descriptions.slice();
@@ -28,12 +33,11 @@ class App extends React.Component {
     setArticleApiData = (dataToSet) => {
 
         console.log(dataToSet);
+
         //sets received data from NYT to state
         this.setState({data: dataToSet});
-
-
         let linksArray = [];
-        this.state.data.response.docs.slice(0, 20).map((data) => {
+        this.state.data.response.docs.slice(0, 2).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
@@ -63,8 +67,8 @@ class App extends React.Component {
     }
 
     articleClicked = (evt, i) => {
-        var modal = document.getElementById('myModal');
-        var span = document.getElementsByClassName("close")[0];
+        let modal = document.getElementById('myModal');
+        let span = document.getElementsByClassName("close")[0];
         modal.style.display = "block";
         span.onclick = function () {
             modal.style.display = "none";
@@ -126,8 +130,11 @@ class App extends React.Component {
 
     getArticles = () => {
         if ($("#search_input").val() && $("#year_selector").val()) {
-            $("i").addClass("fa fa-spinner fa-spin");
+            $("#search_btn").prop("disabled",true);
+            $("#search_btn").html('<i class="fa fa-spinner fa-spin"></i> &nbsp;PLEASE WAIT...');
+            console.log("Disabled btn");
             this.setState({articleDetailsData: []});
+            this.setState({data: []});
             const year = $("#search_input").val();
             const month = $("#year_selector").val();
             const url = "https://api.nytimes.com/svc/archive/v1/" + year + "/" + month + ".json"
@@ -146,41 +153,67 @@ class App extends React.Component {
     }
 }
 
-const DateChooser = (props) => {
-    return (
-        <div className="search_wrapper">
-            <p className="heading_msg">T H E&nbsp;&nbsp;N E W&nbsp;&nbsp;Y O R K&nbsp;&nbsp;T I M E S</p>
-            <p className="heading_msg">E X P L O R E R</p>
-            <div className="dropdown-buttons">
-                <div className="dropdown-button">
-                    <select id="year_selector">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
+class DateChooser extends React.Component {
+
+    handleChange =() =>{
+        if ($('#search_input').val() < 1851 || $('#search_input').val() > 2018) {
+            $('#errorMsg').text("Enter year from 1851 to 2018");
+            $("#search_btn").prop("disabled",true);
+            $("#search_btn").css('color', '#C0C0C0');
+        }
+        else {
+            $('#errorMsg').text("");
+            $("#search_btn").prop("disabled",false);
+            $("#search_btn").css('color', 'white');
+        }
+    }
+    render() {
+        return (
+            <div className="search_wrapper">
+                <p className="heading_msg">T H E&nbsp;&nbsp;N E W&nbsp;&nbsp;Y O R K&nbsp;&nbsp;T I M E S</p>
+                <p className="heading_msg">E X P L O R E R</p>
+                <div className="dropdown-buttons">
+                    <div className="dropdown-button">
+                        <select id="year_selector">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div className="dropdown-input">
+
+
+                        <input className="search_input" id="search_input" type="number" min="1851" max="2018"
+                               maxLength="4"
+                               message="Enter year from 1851 to 2018"
+                               minLength="4"
+                               placeholder="e.g. 1999"
+                               onChange={(e) => {
+                                   this.handleChange(e)
+                               }}/>
+                        <span id="errorMsg" value={"         "}></span>
+
+                    </div>
                 </div>
-                <div className="dropdown-input">
-                    <input className="search_input" id="search_input" type="number" min="1851" max="2018" maxLength="4"
-                           minLength="4"
-                           placeholder="e.g. 1999"/>
+
+                <div className="button_wrapper">
+                    <button className="search_btn" id="search_btn" onClick={this.props.articleClick}>
+                        <i></i>&nbsp; Click to get articles
+                    </button>
                 </div>
             </div>
-            <div className="button_wrapper">
-                <button className="search_btn" id="search_btn" onClick={props.articleClick}>
-                    <i></i>&nbsp; Click to get articles
-                </button>
-            </div>
-        </div>
-    );
+        );
+    }
+
 
 }
 
@@ -244,6 +277,5 @@ const ArticleDetails = (props) => {
     );
 
 }
-
 
 ReactDOM.render(<App/>, document.getElementById('root'));

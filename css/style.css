@@ -44,7 +44,7 @@ html{
     color: #ffffff;
     font-size: 50px;
     padding-top: 50px;
-    margin-bottom: -70px;
+    margin-bottom: -90px;
 }
 
 
@@ -68,7 +68,7 @@ html{
     display: inline-flex;
     justify-content: center;
     margin-bottom: 10px;
-    padding-top: 100px;
+    padding-top: 150px;
 }
 
 .dropdown-button {
@@ -116,6 +116,13 @@ html{
     border: none !important;
 }
 
+#errorMsg{
+    color: white;
+    position: absolute;
+    display: flex;
+    margin-left: 50px;
+}
+
 
 .search_btn {
     width: 300px;
@@ -128,7 +135,7 @@ html{
     font-weight: 500;
     outline: none;
     background: #1ABC9C;
-    color: #fff;
+    color: #FFF;
     font-size: 1.1em;
     text-shadow: -1px 0px 1px rgba(214, 214, 214, 0.59);
     -webkit-text-shadow: -1px 0px 1px rgba(214, 214, 214, 0.59);
@@ -138,9 +145,8 @@ html{
     -webkit-border-radius: 40px;
     -moz-border-radius: 40px;
     -o-border-radius: 40px;
-    color: #fff;
     box-shadow: 0 3px #16A085;
-    margin-top: 20px;
+    margin-top: 30px;
     -webkit-font-smoothing: subpixel-antialiased;
     -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
     transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
