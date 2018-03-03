@@ -1,7 +1,19 @@
+/**
+ * @param response.docs
+ * @param web_url
+ * @param docs.byline
+ * @param docs.byline.original
+ * @param docs.pub_date
+ * @param docs.section_name
+ * @param docs.word_count
+ * @param receivedData.description
+ */
+
 class App extends React.Component {
 
     state = {
         data: [],
+        receivedData: [],
         links: [],
         imageLinks: [],
         titles: [],
@@ -13,14 +25,22 @@ class App extends React.Component {
 
     setArticleDetailsData = (receivedData) => {
 
-
         //enables the button after success response from API and removes spinner
-        $("#search_btn").prop("disabled",false);
-        $("#search_btn").text("CLICK TO GET ARTICLES");
+        $("#search_btn").prop("disabled", false).text("CLICK TO GET ARTICLES");
 
-        var imgLinks = this.state.imageLinks.slice();
-        var titles = this.state.titles.slice();
-        var descriptions = this.state.descriptions.slice();
+        //sets image,title and descriptions from link preview API to ArticlePreview
+        let data = [];
+        data.push(...this.state.receivedData);
+        data.push(receivedData);
+        this.setState({receivedData: data});
+
+        let imgLinks = [];
+        imgLinks.push(...this.state.imageLinks);
+        let titles = [];
+        titles.push(...this.state.titles);
+        let descriptions = [];
+        descriptions.push(...this.state.descriptions);
+
         imgLinks.push(receivedData.image);
         titles.push(receivedData.title);
         descriptions.push(receivedData.description);
@@ -31,23 +51,15 @@ class App extends React.Component {
     }
 
     setArticleApiData = (dataToSet) => {
-
-        console.log(dataToSet);
-
         //sets received data from NYT to state
         this.setState({data: dataToSet});
         let linksArray = [];
+        this.setState({links: linksArray});
         this.state.data.response.docs.slice(0, 20).map((data) => {
             linksArray.push(data.web_url);
         });
         this.setState({links: linksArray});
-
-        //deleting all data = to render new one - prevents duplicating
-        this.setState({imageLinks: []});
-        this.setState({titles: []});
-        this.setState({descriptions: []});
-
-        this.state.links.map((link) => {
+        linksArray.map((link) => {
             $.ajax({
                 url: "https://api.linkpreview.net/",
                 data: {
@@ -67,28 +79,29 @@ class App extends React.Component {
     }
 
     articleClicked = (evt, i) => {
+        //opens modal dialog when article is clicked
+        this.setState({clicked_index: i});
         let modal = document.getElementById('myModal');
         let span = document.getElementsByClassName("close")[0];
         modal.style.display = "block";
         span.onclick = function () {
             modal.style.display = "none";
-        }
+        };
         window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }
+        };
 
-
-        this.setState({articleDetailsData: []});
-        this.setState({clicked_index: i});
+        //fetch data for modal dialog
         let headline = this.state.data.response.docs[i].headline.main;
-        let author = this.state.data.response.docs[i].byline.original;
+        let author = this.state.data.response.docs[i].byline ? this.state.data.response.docs[i].byline.original : "";
         let pub_date = this.state.data.response.docs[i].pub_date;
         let section = this.state.data.response.docs[i].section_name;
         let word_count = this.state.data.response.docs[i].word_count;
         let web_url = this.state.data.response.docs[i].web_url;
         let aDocDetails = [];
+        this.setState({articleDetailsData: aDocDetails});
         aDocDetails.push(headline);
         aDocDetails.push(author);
         aDocDetails.push(pub_date);
@@ -96,7 +109,42 @@ class App extends React.Component {
         aDocDetails.push(word_count);
         aDocDetails.push(web_url);
         this.setState({articleDetailsData: aDocDetails});
-    }
+    };
+
+    getArticles = () => {
+        this.setState({titles: []});
+        this.setState({links: []});
+        this.setState({imageLinks: []});
+        this.setState({titles: []});
+        this.setState({descriptions: []});
+
+        //checks if user entered correct data
+        //noinspection JSJQueryEfficiency
+        if ($("#search_input").val() && $("#year_selector").val()) {
+
+            //prevents rage click and loads spinner
+            $("#search_btn").prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> &nbsp;PLEASE WAIT...');
+            //noinspection JSJQueryEfficiency
+            $('#search_input').attr('placeholder', 'e.g. 1999').css('border', '1px solid #635656');
+
+            //fetch user entries and pass it to NYT API
+            const year = $("#search_input").val();
+            const month = $("#year_selector").val();
+            const url = "https://api.nytimes.com/svc/archive/v1/" + year + "/" + month + ".json"
+            $.ajax({
+                type: "GET",
+                data: {
+                    apikey: "3674ce641aa342e7b8d71ff60e382c11"
+                },
+                url: url,
+                'success': this.setArticleApiData
+            });
+        } else {
+            //gives message to the user if user do not enter year
+            $('#search_input').attr('placeholder', 'Choose year...').css('border', '1px solid #1ABC9C');
+        }
+
+    };
 
     render() {
 
@@ -127,50 +175,28 @@ class App extends React.Component {
             </div>
         )
     }
-
-    getArticles = () => {
-        if ($("#search_input").val() && $("#year_selector").val()) {
-            $("#search_btn").prop("disabled",true);
-            $("#search_btn").html('<i class="fa fa-spinner fa-spin"></i> &nbsp;PLEASE WAIT...');
-            console.log("Disabled btn");
-            this.setState({articleDetailsData: []});
-            this.setState({data: []});
-            const year = $("#search_input").val();
-            const month = $("#year_selector").val();
-            const url = "https://api.nytimes.com/svc/archive/v1/" + year + "/" + month + ".json"
-            $.ajax({
-                type: "GET",
-                data: {
-                    apikey: "3674ce641aa342e7b8d71ff60e382c11"
-                },
-                url: url,
-                'success': this.setArticleApiData
-            });
-        } else {
-            alert('You must choose some month and year');
-        }
-
-    }
 }
 
 class DateChooser extends React.Component {
 
-    handleChange =() =>{
+    handleChange = () => {
+        //gives message to the user if user do not enter year between 1851-2018
+        //noinspection JSJQueryEfficiency
         if ($('#search_input').val() < 1851 || $('#search_input').val() > 2018) {
             $('#errorMsg').text("Enter year from 1851 to 2018");
-            $("#search_btn").prop("disabled",true);
-            $("#search_btn").css('color', '#C0C0C0');
+            $("#search_btn").prop("disabled", true).css('color', '#C0C0C0');
         }
         else {
             $('#errorMsg').text("");
-            $("#search_btn").prop("disabled",false);
-            $("#search_btn").css('color', 'white');
+            $("#search_btn").prop("disabled", false).css('color', 'white');
+            $('#search_input').css('border', '1px solid #635656');
         }
-    }
+    };
+
     render() {
         return (
             <div className="search_wrapper">
-                <p className="heading_msg">T H E&nbsp;&nbsp;N E W&nbsp;&nbsp;Y O R K&nbsp;&nbsp;T I M E S</p>
+                <p className="heading_msg">T H E&nbsp;&nbsp;B I G&nbsp;&nbsp;A P P L E&nbsp;&nbsp;N E W S</p>
                 <p className="heading_msg">E X P L O R E R</p>
                 <div className="dropdown-buttons">
                     <div className="dropdown-button">
@@ -190,8 +216,6 @@ class DateChooser extends React.Component {
                         </select>
                     </div>
                     <div className="dropdown-input">
-
-
                         <input className="search_input" id="search_input" type="number" min="1851" max="2018"
                                maxLength="4"
                                message="Enter year from 1851 to 2018"
@@ -200,14 +224,14 @@ class DateChooser extends React.Component {
                                onChange={(e) => {
                                    this.handleChange(e)
                                }}/>
-                        <span id="errorMsg" value={"         "}></span>
+                        <span id="errorMsg" value={""}/>
 
                     </div>
                 </div>
 
                 <div className="button_wrapper">
                     <button className="search_btn" id="search_btn" onClick={this.props.articleClick}>
-                        <i></i>&nbsp; Click to get articles
+                        <i/>&nbsp; Click to get articles
                     </button>
                 </div>
             </div>
@@ -218,6 +242,7 @@ class DateChooser extends React.Component {
 }
 
 class ArticleGrid extends React.Component {
+
     render() {
         let images = this.props.images;
         let titles = this.props.titles;
@@ -227,12 +252,12 @@ class ArticleGrid extends React.Component {
             <div className="wrapper">
                 <div className="flex-grid">
                     {
-                        Object.keys(images).map((index, i) => {
+                        titles.map((title, i) => {
                             return (<ArticlePreview isClicked={i === this.props.clicked_index}
                                                     onClick={(evt) => this.props.clicked(evt, i)}
-                                                    img={images[index]}
-                                                    title={titles[index]}
-                                                    description={descriptions[index]}
+                                                    img={images[i]}
+                                                    title={titles[i]}
+                                                    description={descriptions[i]}
                                                     key={i}> </ArticlePreview>)
                         })
                     }
@@ -247,10 +272,10 @@ const ArticlePreview = (props) => {
         <div className={`col ${props.isClicked ? 'red' : 'white'}`} onClick={props.onClick}>
             <p className="title_p">{props.title}</p>
             <img src={props.img}/>
-            <p className="text_p">{props.description ? props.description.substring(0, 100) + "..." : props.description}</p>
+            <p className="text_p">{props.description ? props.description.substring(0, 75) + "..." : props.description}</p>
         </div>
     )
-}
+};
 
 const ArticleDetails = (props) => {
     return (
@@ -268,14 +293,11 @@ const ArticleDetails = (props) => {
                     <button className="read_more_btn"><a target="_blank" href={props.web_url}>Read more</a></button>
                 </div>
 
-                <div className="modal-footer">
-
-                </div>
             </div>
 
         </div>
     );
 
-}
+};
 
 ReactDOM.render(<App/>, document.getElementById('root'));
